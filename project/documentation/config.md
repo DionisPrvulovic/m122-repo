@@ -1,4 +1,6 @@
-### `config.md`
+# Currency Conversion System
+
+## Konfigurationsdatei
 
 Die Konfigurationsdatei (`currency.cfg`) wird verwendet, um das Verhalten des Währungsskripts einzurichten und anzupassen. Jede Sektion in dieser Datei enthält spezifische Einstellungen, die den API-Zugriff, SSH-Verbindungen, Optionen für das Speichern von Dateien, Logging, Datenformatierung und Pfade für die Dateispeicherung und -übertragung steuern.
 

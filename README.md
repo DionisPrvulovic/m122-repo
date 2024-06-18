@@ -1,72 +1,41 @@
-# Currency Conversion System
+# Währungskonverter Projekt
 
-## Projektbeschreibung
+## Übersicht
 
-Dieses Projekt wurde im Rahmen des Moduls 122 entwickelt. Ziel des Projekts ist es, eine API (in diesem Fall die CurrencyAPI) zu nutzen, um Daten zur Umrechnung von CHF in andere Währungen zu erhalten. Das System funktioniert gemäß dem beigefügten Diagramm und besteht aus mehreren Schritten, darunter Datenabruf, -verarbeitung und -weitergabe.
+Dieses Repository enthält ein Währungskonverter-Projekt, das im Rahmen des TBZ Modul-122 entwickelt wurde. Das Projekt ist in mehrere Ordner strukturiert, um den Code und die Dokumentation zu organisieren.
 
-## Inhaltsverzeichnis
+## Repository-Struktur
 
-- [Currency Conversion System](#currency-conversion-system)
-  - [Projektbeschreibung](#projektbeschreibung)
-  - [Inhaltsverzeichnis](#inhaltsverzeichnis)
-  - [Voraussetzungen](#voraussetzungen)
-  - [Installation](#installation)
-  - [Nutzung](#nutzung)
-  - [Systemarchitektur](#systemarchitektur)
-  - [API-Endpunkt](#api-endpunkt)
+- **project/**
+  - Dieser Ordner enthält den Hauptcode für die Währungskonverter-Anwendung.
+  - **currency.py**: Das Hauptskript für das Abrufen von Währungsdaten, Erstellen einer Tabelle und optionales Hochladen auf einen Server.
+  - **currency.cfg**: Die Konfigurationsdatei mit API-Schlüsseln, SSH-Details und anderen Optionen.
+  - **README.md**: Dokumentation für den Projektordner, die den Code und seine Funktionalität erklärt.
 
-## Voraussetzungen
+- **scripts/**
+  - Dieser Ordner enthält verschiedene Skripte, die mit dem Projekt zu tun haben, wie z.B. Setup-Skripte, Dienstprogramme und möglicherweise Bereitstellungsskripte.
 
-- Python 3.x
-- `requests` Bibliothek
+## Projektordner (`project/`)
 
-## Installation
+### currency.py
 
-1. Klonen Sie das Repository:
+Dieses Skript führt die folgenden Aufgaben aus:
 
-   ```bash
-   git clone https://github.com/IhrBenutzername/currency-conversion-system.git
-   ```
+1. **Abrufen von Währungsdaten**: Holt die neuesten Währungsdaten von der API, die in der `currency.cfg` Datei angegeben ist.
+2. **Erstellen einer Tabelle**: Erstellt eine Tabelle mit den abgerufenen Währungsdaten und speichert sie lokal ab.
+3. **Optionales Hochladen**: Lädt die erstellte Tabelle auf einen konfigurierten Server hoch, falls dies aktiviert ist.
 
-2. Navigieren Sie in das Projektverzeichnis:
+### currency.cfg
 
-   ```bash
-   cd currency-conversion-system
-   ```
+Die `currency.cfg` Datei enthält die Konfiguration für das Skript:
 
-3. Installieren Sie die erforderlichen Bibliotheken:
+- **API-Konfiguration**: API-Schlüssel und URL für den Abruf der Währungsdaten.
+- **SSH-Konfiguration**: Details für den SSH-Zugriff, um Dateien auf einen Server hochzuladen.
+- **Optionen**: Verschiedene Einstellungen wie das Erstellen einer Bilddatei der Tabelle, das Speichern der Daten als JSON-Datei, Log-Einstellungen und Darstellungsoptionen für die Tabelle.
+- **Pfade**: Lokale und entfernte Pfade für das Speichern und Hochladen der erstellten Tabelle.
 
-   ```bash
-   pip install requests
-   ```
+## Verwendung
 
-## Nutzung
-
-1. Führen Sie das Skript `currency_conversion.py` aus, um die aktuellen Wechselkurse abzurufen und zu verarbeiten:
-
-   ```bash
-   python currency_conversion.py
-   ```
-
-2. Die verarbeiteten Daten werden in verschiedenen Formaten gespeichert (`data.raw`, `config.cfg`, `log.log`).
-
-## Systemarchitektur
-
-Das System ist in mehrere Komponenten unterteilt, wie im Diagramm dargestellt:
-
-1. **Input**:
-   - Abruf von Daten aus verschiedenen Quellen (z. B. Analytics Data, SQL-DB Data, Encrypted Data).
-
-2. **Processing**:
-   - Verarbeitung der Daten im zentralen System (`[IhrSystem]`).
-
-3. **Output**:
-   - Weitergabe der verarbeiteten Daten an verschiedene Ausgabekanäle (z. B. Execution, Config, Cloud, Publish, DB Storage, Communication).
-
-## API-Endpunkt
-
-Der API-Endpunkt, der in diesem Projekt verwendet wird, lautet:
-
-```
-https://api.currencyapi.com/v3/latest?apikey=cur_live_4SCh6zYYyQQ0hzWuDw7l4uU3gyzO4ehTMlmGJmcR&currencies=EUR,USD,CAD,CHF&base_currency=CHF
-```
+1. **Konfiguration anpassen**: Passen Sie die `currency.cfg` Datei an Ihre Bedürfnisse an.
+2. **Skript ausführen**: Führen Sie das `currency.py` Skript aus, um die Währungsdaten abzurufen und die Tabelle zu erstellen.
+3. **Ergebnisse überprüfen**: Überprüfen Sie die generierte Tabelle und die optional erstellten JSON-Dateien und Logs.
