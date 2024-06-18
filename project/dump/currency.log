@@ -1,0 +1,44 @@
+2024-06-18 11:36:54,365 INFO: Script started
+2024-06-18 11:36:54,365 INFO: Fetching currency data from API
+2024-06-18 11:36:54,738 INFO: Currency data fetched successfully
+2024-06-18 11:36:54,740 INFO: Generating table from currency data
+2024-06-18 11:36:55,115 INFO: Table image generated and saved
+2024-06-18 11:36:55,118 INFO: Uploading table image to server
+2024-06-18 11:36:55,308 INFO: Connected (version 2.0, client OpenSSH_9.6p1)
+2024-06-18 11:36:55,843 INFO: Authentication (publickey) successful!
+2024-06-18 11:36:57,216 INFO: Table image uploaded to server
+2024-06-18 11:36:57,217 INFO: Sending email with table attachment
+2024-06-18 11:37:00,973 ERROR: Error occurred: (535, b'5.7.8 Error: authentication failed')
+2024-06-18 11:41:53,085 INFO: Script started
+2024-06-18 11:41:53,085 INFO: Fetching currency data from API
+2024-06-18 11:41:53,406 INFO: Currency data fetched successfully
+2024-06-18 11:41:53,407 INFO: Generating table from currency data
+2024-06-18 11:41:53,791 INFO: Table image generated and saved
+2024-06-18 11:41:53,803 INFO: Uploading table image to server
+2024-06-18 11:41:53,993 INFO: Connected (version 2.0, client OpenSSH_9.6p1)
+2024-06-18 11:41:54,526 INFO: Authentication (publickey) successful!
+2024-06-18 11:41:55,841 INFO: Table image uploaded to server
+2024-06-18 11:41:55,843 INFO: Sending email with table attachment
+2024-06-18 11:41:56,110 ERROR: Error occurred: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials ffacd0b85a97d-36075104a0fsm13807961f8f.96 - gsmtp')
+2024-06-18 11:42:26,790 INFO: Script started
+2024-06-18 11:42:26,790 INFO: Fetching currency data from API
+2024-06-18 11:42:27,131 INFO: Currency data fetched successfully
+2024-06-18 11:42:27,133 INFO: Generating table from currency data
+2024-06-18 11:42:27,557 INFO: Table image generated and saved
+2024-06-18 11:42:27,558 INFO: Uploading table image to server
+2024-06-18 11:42:27,749 INFO: Connected (version 2.0, client OpenSSH_9.6p1)
+2024-06-18 11:42:28,559 INFO: Authentication (publickey) successful!
+2024-06-18 11:42:29,597 INFO: Table image uploaded to server
+2024-06-18 11:42:29,598 INFO: Sending email with table attachment
+2024-06-18 11:42:29,831 ERROR: Error occurred: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials ffacd0b85a97d-362822f53f6sm371443f8f.0 - gsmtp')
+2024-06-18 11:44:13,790 INFO: Script started
+2024-06-18 11:44:13,790 INFO: Fetching currency data from API
+2024-06-18 11:44:14,086 INFO: Currency data fetched successfully
+2024-06-18 11:44:14,088 INFO: Generating table from currency data
+2024-06-18 11:44:14,451 INFO: Table image generated and saved
+2024-06-18 11:44:14,468 INFO: Uploading table image to server
+2024-06-18 11:44:14,671 INFO: Connected (version 2.0, client OpenSSH_9.6p1)
+2024-06-18 11:44:15,229 INFO: Authentication (publickey) successful!
+2024-06-18 11:44:16,626 INFO: Table image uploaded to server
+2024-06-18 11:44:16,627 INFO: Sending email with table attachment
+2024-06-18 11:44:16,860 ERROR: Error occurred: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-422870e9681sm222208075e9.28 - gsmtp')

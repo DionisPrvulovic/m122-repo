@@ -9,6 +9,11 @@ from matplotlib.colors import hsv_to_rgb, hex2color
 import os
 import configparser
 import logging
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+from email.utils import formataddr
 
 # Load configuration
 config = configparser.ConfigParser()
@@ -32,13 +37,21 @@ VALUES = list(map(int, config['OPTIONS']['VALUES'].split(',')))
 COLOR = config['OPTIONS']['COLOR']
 TRANSPARENCY = config.getfloat('OPTIONS', 'TRANSPARENCY')
 CURRENCY_LOG = config.getboolean('OPTIONS', 'CURRENCY_LOG')
+SEND_EMAIL = config.getboolean('OPTIONS', 'SEND_EMAIL')
+
+# Email configuration
+SMTP_SERVER = config['EMAIL']['SMTP_SERVER']
+SMTP_PORT = config['EMAIL']['SMTP_PORT']
+SMTP_USER = config['EMAIL']['SMTP_USER']
+SMTP_PASSWORD = config['EMAIL']['SMTP_PASSWORD']
+TO_EMAIL = config['EMAIL']['TO_EMAIL']
 
 # Paths
 DUMP_PATH = os.path.join(os.path.dirname(__file__), 'dump')
 LOCAL_PATH = os.path.join(DUMP_PATH, 'table.png')
 JSON_PATH = os.path.join(DUMP_PATH, 'currency_data.json')
 LOG_PATH = os.path.join(DUMP_PATH, 'currency.log')
-REMOTE_PATH = config['PATHS']['REMOTE_PATH']
+REMOTE_PATH = config['PATHS']['REMOTE_PATH']  # Nginx Standardpfad
 
 # Ensure dump directory exists
 os.makedirs(DUMP_PATH, exist_ok=True)
@@ -77,7 +90,7 @@ def get_color():
     if COLOR.lower() == "random":
         h = np.random.rand()
         s = 0.5 + 0.5 * np.random.rand()  # Saturation between 0.5 and 1
-        v = 0.7 + 0.3 * np.random.rand()  # Brightness between 0.7 and 1
+        v = 0.7 + 0.3 * np.random.rand()  # Brightness between 0.7 und 1
         return hsv_to_rgb((h, s, v))
     else:
         return hex2color(COLOR)
@@ -139,6 +152,28 @@ def upload_to_server(local_file, remote_path):
     ssh.close()
     log_message('info', 'Table image uploaded to server')
 
+def send_email(subject, body, attachment_path):
+    log_message('info', 'Sending email with table attachment')
+
+    msg = MIMEMultipart()
+    msg['From'] = SMTP_USER
+    msg['To'] = TO_EMAIL
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    with open(attachment_path, "rb") as attachment:
+        part = MIMEApplication(attachment.read(), Name=os.path.basename(attachment_path))
+        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+        msg.attach(part)
+
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.sendmail(SMTP_USER, TO_EMAIL, msg.as_string())
+    
+    log_message('info', 'Email sent successfully')
+
 def main():
     try:
         log_message('info', 'Script started')
@@ -158,6 +193,10 @@ def main():
         if DUMPING_TABLE_IMAGE:
             upload_to_server(LOCAL_PATH, REMOTE_PATH)
             print("Tabelle erfolgreich auf den Server hochgeladen.")
+
+            if SEND_EMAIL:
+                send_email("Aktuelle Wechselkurstabelle", "Anbei die aktuelle Wechselkurstabelle.", LOCAL_PATH)
+                print("Email erfolgreich verschickt.")
         elif os.path.exists(LOCAL_PATH):
             os.remove(LOCAL_PATH)
             log_message('info', 'Existing table image deleted')
