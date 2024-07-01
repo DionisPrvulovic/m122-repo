@@ -9,11 +9,8 @@ from matplotlib.colors import hsv_to_rgb, hex2color
 import os
 import configparser
 import logging
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
-from email.utils import formataddr
+from mailjet_rest import Client
+import base64
 
 # Load configuration
 config = configparser.ConfigParser()
@@ -28,6 +25,12 @@ SSH_HOST = config['SSH']['SSH_HOST']
 SSH_USER = config['SSH']['SSH_USER']
 SSH_KEY_PATH = config['SSH']['SSH_KEY_PATH']
 
+# Mailjet configuration
+MAILJET_API_KEY = config['MAILJET']['API_KEY']
+MAILJET_API_SECRET = config['MAILJET']['API_SECRET']
+SENDER_EMAIL = config['MAILJET']['SENDER_EMAIL']
+RECIPIENT_EMAIL = config['MAILJET']['RECIPIENT_EMAIL']
+
 # Options configuration
 DUMPING_TABLE_IMAGE = config.getboolean('OPTIONS', 'DUMPING_TABLE_IMAGE')
 DUMPING_JSON_FILE = config.getboolean('OPTIONS', 'DUMPING_JSON_FILE')
@@ -37,21 +40,14 @@ VALUES = list(map(int, config['OPTIONS']['VALUES'].split(',')))
 COLOR = config['OPTIONS']['COLOR']
 TRANSPARENCY = config.getfloat('OPTIONS', 'TRANSPARENCY')
 CURRENCY_LOG = config.getboolean('OPTIONS', 'CURRENCY_LOG')
-SEND_EMAIL = config.getboolean('OPTIONS', 'SEND_EMAIL')
-
-# Email configuration
-SMTP_SERVER = config['EMAIL']['SMTP_SERVER']
-SMTP_PORT = config['EMAIL']['SMTP_PORT']
-SMTP_USER = config['EMAIL']['SMTP_USER']
-SMTP_PASSWORD = config['EMAIL']['SMTP_PASSWORD']
-TO_EMAIL = config['EMAIL']['TO_EMAIL']
+SEND_EMAIL = config.getboolean('OPTIONS', 'SEND_EMAIL')  # Add this line
 
 # Paths
 DUMP_PATH = os.path.join(os.path.dirname(__file__), 'dump')
 LOCAL_PATH = os.path.join(DUMP_PATH, 'table.png')
 JSON_PATH = os.path.join(DUMP_PATH, 'currency_data.json')
 LOG_PATH = os.path.join(DUMP_PATH, 'currency.log')
-REMOTE_PATH = config['PATHS']['REMOTE_PATH']  # Nginx Standardpfad
+REMOTE_PATH = config['PATHS']['REMOTE_PATH']
 
 # Ensure dump directory exists
 os.makedirs(DUMP_PATH, exist_ok=True)
@@ -76,22 +72,17 @@ def log_message(level, message):
         getattr(logger, level)(message)
 
 def fetch_currency_data():
-    log_message('info', 'Fetching currency data from API')
     response = requests.get(API_URL)
-    response.raise_for_status()
-    log_message('info', 'Currency data fetched successfully')
-    return response.json()
+    data = response.json()
+    log_message('info', 'Fetched currency data')
+    return data
 
-def format_large_numbers(value, decimal_places):
-    formatted_value = f"{value:,.{decimal_places}f}"
-    return formatted_value.replace(',', "'")
+def format_large_numbers(number, decimal_places):
+    return f"{number:,.{decimal_places}f}"
 
 def get_color():
-    if COLOR.lower() == "random":
-        h = np.random.rand()
-        s = 0.5 + 0.5 * np.random.rand()  # Saturation between 0.5 and 1
-        v = 0.7 + 0.3 * np.random.rand()  # Brightness between 0.7 und 1
-        return hsv_to_rgb((h, s, v))
+    if COLOR == 'random':
+        return np.random.rand(3,)
     else:
         return hex2color(COLOR)
 
@@ -146,33 +137,45 @@ def upload_to_server(local_file, remote_path):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SSH_HOST, username=SSH_USER, key_filename=SSH_KEY_PATH)
-    
+
     with SCPClient(ssh.get_transport()) as scp:
         scp.put(local_file, remote_path)
     ssh.close()
     log_message('info', 'Table image uploaded to server')
 
-def send_email(subject, body, attachment_path):
-    log_message('info', 'Sending email with table attachment')
-
-    msg = MIMEMultipart()
-    msg['From'] = SMTP_USER
-    msg['To'] = TO_EMAIL
-    msg['Subject'] = subject
-
-    msg.attach(MIMEText(body, 'plain'))
-
-    with open(attachment_path, "rb") as attachment:
-        part = MIMEApplication(attachment.read(), Name=os.path.basename(attachment_path))
-        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
-        msg.attach(part)
-
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.sendmail(SMTP_USER, TO_EMAIL, msg.as_string())
+def send_email(subject, text, attachment_path=None):
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    data = {
+        'Messages': [
+            {
+                "From": {
+                    "Email": SENDER_EMAIL,
+                    "Name": "Currency Converter"
+                },
+                "To": [
+                    {
+                        "Email": RECIPIENT_EMAIL,
+                        "Name": "Recipient"
+                    }
+                ],
+                "Subject": subject,
+                "TextPart": text,
+            }
+        ]
+    }
+    if attachment_path:
+        with open(attachment_path, "rb") as f:
+            encoded_file = base64.b64encode(f.read()).decode('utf-8')
+            data['Messages'][0]['Attachments'] = [
+                {
+                    "ContentType": "image/png",
+                    "Filename": os.path.basename(attachment_path),
+                    "Base64Content": encoded_file
+                }
+            ]
     
-    log_message('info', 'Email sent successfully')
+    result = mailjet.send.create(data=data)
+    log_message('info', f"Email sent: {result.status_code} {result.json()}")
 
 def main():
     try:
@@ -193,13 +196,14 @@ def main():
         if DUMPING_TABLE_IMAGE:
             upload_to_server(LOCAL_PATH, REMOTE_PATH)
             print("Tabelle erfolgreich auf den Server hochgeladen.")
-
-            if SEND_EMAIL:
-                send_email("Aktuelle Wechselkurstabelle", "Anbei die aktuelle Wechselkurstabelle.", LOCAL_PATH)
-                print("Email erfolgreich verschickt.")
         elif os.path.exists(LOCAL_PATH):
             os.remove(LOCAL_PATH)
             log_message('info', 'Existing table image deleted')
+        
+        # Send email with table image if SEND_EMAIL is True
+        if SEND_EMAIL:
+            send_email("Currency Conversion Table", "Please find the attached currency conversion table.", LOCAL_PATH)
+
         log_message('info', 'Script completed successfully')
     except Exception as e:
         log_message('error', f"Error occurred: {e}")
