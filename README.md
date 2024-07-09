@@ -1,41 +1,21 @@
-# Währungskonverter Projekt
+# M122-Repository-Dionis-Prvulovic
 
-## Übersicht
-
-Dieses Repository enthält ein Währungskonverter-Projekt, das im Rahmen des TBZ Modul-122 entwickelt wurde. Das Projekt ist in mehrere Ordner strukturiert, um den Code und die Dokumentation zu organisieren.
+Dieses Repository enthält das Currency Conversion System, ein Projekt entwickelt für das Modul M122. Es bietet eine Plattform für die Umrechnung verschiedener Währungen und beinhaltet spezifische Versionen für Windows und Linux.
 
 ## Repository-Struktur
 
-- **project/**
-  - Dieser Ordner enthält den Hauptcode für die Währungskonverter-Anwendung.
-  - **currency.py**: Das Hauptskript für das Abrufen von Währungsdaten, Erstellen einer Tabelle und optionales Hochladen auf einen Server.
-  - **currency.cfg**: Die Konfigurationsdatei mit API-Schlüsseln, SSH-Details und anderen Optionen.
-  - **README.md**: Dokumentation für den Projektordner, die den Code und seine Funktionalität erklärt.
+- **project/**: Enthält die Ausführungen des Currency Conversion Systems für Windows und Linux.
+- **scripts/**: Sammlung von Skripten, die während des Moduls M122 zum Üben und Testen erstellt wurden.
+- **venv/**: Beinhaltet das Virtual Environment für Linux, notwendig für die Ausführung des Projekts auf Linux-Systemen.
 
-- **scripts/**
-  - Dieser Ordner enthält verschiedene Skripte, die mit dem Projekt zu tun haben, wie z.B. Setup-Skripte, Dienstprogramme und möglicherweise Bereitstellungsskripte.
+## Überblick
 
-## Projektordner (`project/`)
+Das Projekt demonstriert die Anwendung verschiedener Softwareentwicklungskonzepte und die Integration externer APIs für die Umrechnung von Währungen. Es ist strukturiert, um eine Versionierung für zwei Betriebssysteme anzubieten und nutzt virtuelle Umgebungen zur sicheren und isolierten Ausführung der Software.
 
-### currency.py
+Die im `scripts`-Ordner enthaltenen Skripte dienen als ergänzende Ressourcen für das Verständnis verschiedener Programmierpraktiken und sind nicht direkt in die Hauptanwendung integriert.
 
-Dieses Skript führt die folgenden Aufgaben aus:
+Detaillierte Installationsanweisungen und Dokumentationen zum Betrieb des Systems befinden sich direkt in den jeweiligen Projektverzeichnissen unter `project/documentation`.
 
-1. **Abrufen von Währungsdaten**: Holt die neuesten Währungsdaten von der API, die in der `currency.cfg` Datei angegeben ist.
-2. **Erstellen einer Tabelle**: Erstellt eine Tabelle mit den abgerufenen Währungsdaten und speichert sie lokal ab.
-3. **Optionales Hochladen**: Lädt die erstellte Tabelle auf einen konfigurierten Server hoch, falls dies aktiviert ist.
+## Hinweis
 
-### currency.cfg
-
-Die `currency.cfg` Datei enthält die Konfiguration für das Skript:
-
-- **API-Konfiguration**: API-Schlüssel und URL für den Abruf der Währungsdaten.
-- **SSH-Konfiguration**: Details für den SSH-Zugriff, um Dateien auf einen Server hochzuladen.
-- **Optionen**: Verschiedene Einstellungen wie das Erstellen einer Bilddatei der Tabelle, das Speichern der Daten als JSON-Datei, Log-Einstellungen und Darstellungsoptionen für die Tabelle.
-- **Pfade**: Lokale und entfernte Pfade für das Speichern und Hochladen der erstellten Tabelle.
-
-## Verwendung
-
-1. **Konfiguration anpassen**: Passen Sie die `currency.cfg` Datei an Ihre Bedürfnisse an.
-2. **Skript ausführen**: Führen Sie das `currency.py` Skript aus, um die Währungsdaten abzurufen und die Tabelle zu erstellen.
-3. **Ergebnisse überprüfen**: Überprüfen Sie die generierte Tabelle und die optional erstellten JSON-Dateien und Logs.
+Bitte beachten Sie die spezifischen Dokumentationen in den Unterordnern für detaillierte Informationen zur Einrichtung und Ausführung des Projekts auf unterschiedlichen Systemen.

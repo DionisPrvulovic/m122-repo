@@ -1,3 +1,10 @@
+# =================================================
+# Script Name: Currency Conversion System
+# Description: Fetches currency data, generates a visual representation, and optionally sends it via email.
+# Author: Dionis Prvulovic
+# Date: 09.07.2024
+# =================================================
+
 import requests
 import json
 import matplotlib.pyplot as plt
