@@ -1,7 +1,0 @@
-requests
-matplotlib
-pandas
-paramiko
-scp
-numpy
-mailjet-rest
